@@ -5,8 +5,11 @@ import Breadcrumbs from '../components/Breadcrumbs.astro';
 import LeadForm from '../components/LeadForm.astro';
 import { COPY } from '../data/copy';
 import { crumbs, childrenOf, siblingsOf, relatedArticles } from '../lib/tree';
+import { PAGE_MD } from '../lib/content';
 const { page } = Astro.props;
 const copy = COPY[page.id];
+const mod = PAGE_MD[page.id];
+const Body = mod?.Content;
 const kids = childrenOf(page.id);
 const sibs = kids.length ? [] : siblingsOf(page);
 const rel = relatedArticles(page, 4);
@@ -30,14 +33,20 @@ const toc = copy?.blocks?.map((b:any,i:number)=>({ id:`s${i+1}`, h:b.h })) ?? []
 
 <div class="wrap pb">
   <article class="prose">
-    {toc.length > 2 && (
+    {Body && (
+      <nav class="toc" aria-label="Содержание">
+        <b>На этой странице</b>
+        <ol>{(mod.getHeadings?.() ?? []).filter((h:any) => h.depth === 2).map((h:any) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+      </nav>
+    )}
+    {!Body && toc.length > 2 && (
       <nav class="toc" aria-label="Содержание">
         <b>На этой странице</b>
         <ol>{toc.map((t:any) => <li><a href={`#${t.id}`}>{t.h}</a></li>)}</ol>
       </nav>
     )}
 
-    {copy ? copy.blocks.map((b:any,i:number) => (
+    {Body ? <Body /> : copy ? copy.blocks.map((b:any,i:number) => (
       <section id={`s${i+1}`}>
         <h2>{b.h}</h2>
         {b.p && <p>{b.p}</p>}
