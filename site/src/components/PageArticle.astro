@@ -71,10 +71,11 @@ const blocks = art.blocks.map((b:any) => { if (b.level === 2) n++; return { ...b
       <div class="side-n"><b>Ещё в разделе «{art.hubName}»</b>
         <ul>{sameHub.map((a:any) => <li><a href={u(a.url)}>{a.h1}</a></li>)}</ul></div>
     )}
-    <div class="side-n"><b>Запросы страницы</b>
-      <p class="side-q">Основной: <b>{art.primary}</b>{art.exact != null && <> · {art.exact} в кавычках</>}</p>
-      {art.support.length > 0 && <ul>{art.support.slice(0,6).map((s:any) => <li>{s.q}</li>)}</ul>}
-    </div>
+    {art.support.length > 0 && (
+      <div class="side-n"><b>О чём ещё спрашивают</b>
+        <ul>{art.support.slice(0,6).map((s:any) => <li>{s.q}</li>)}</ul>
+      </div>
+    )}
   </aside>
 </div>
 <LeadForm />
