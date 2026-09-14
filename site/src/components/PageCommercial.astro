@@ -10,6 +10,7 @@ const { page } = Astro.props;
 const copy = COPY[page.id];
 const mod = PAGE_MD[page.id];
 const Body = mod?.Content;
+const lede = mod?.frontmatter?.lede ?? copy?.lede ?? page.description;
 const kids = childrenOf(page.id);
 const sibs = kids.length ? [] : siblingsOf(page);
 const rel = relatedArticles(page, 4);
@@ -22,7 +23,7 @@ const toc = copy?.blocks?.map((b:any,i:number)=>({ id:`s${i+1}`, h:b.h })) ?? []
   <div class="wrap">
     <span class="chip chip-a">{page.type.replace('B2B-','Для компаний · ')}</span>
     <h1>{page.h1}</h1>
-    <p class="lede ph-l">{copy?.lede ?? page.description}</p>
+    <p class="lede ph-l">{lede}</p>
     <div class="ph-cta">
       <a href="#zayavka" class="btn btn-p">{isB2B ? 'Запросить предложение' : 'Оставить заявку'}</a>
       {isB2B ? <a href={u('/korporativam/ceny/')} class="btn btn-g">Посчитать смету</a>
