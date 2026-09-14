@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os, re, glob, collections, json, html
 D='site/dist'
+BASE='/kvadro-podmoskovye'
 files=[f for f in glob.glob(D+'/**/index.html',recursive=True)]
 rows=[]
 for f in files:
@@ -13,7 +14,8 @@ for f in files:
     h1=re.findall(r'<h1[^>]*>(.*?)</h1>',s,re.S)
     h2=re.findall(r'<h2[^>]*>(.*?)</h2>',s,re.S)
     ld=len(re.findall(r'application/ld\+json',s))
-    links=set(re.findall(r'href="(/[^"#?]*)"',s))
+    links={ (l[len(BASE):] or '/') if l.startswith(BASE+'/') or l==BASE else l
+            for l in re.findall(r'href="(/[^"#?]*)"',s) }
     rows.append(dict(url=url,title=html.unescape(t.group(1)) if t else '',
         desc=html.unescape(d.group(1)) if d else '', canon=c.group(1) if c else '',
         h1=[html.unescape(re.sub('<[^>]+>','',x)).strip() for x in h1],

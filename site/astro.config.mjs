@@ -1,5 +1,22 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { visit } from 'unist-util-visit';
+
+const BASE = '/kvadro-podmoskovye';
+
+/** Префикс base для внутренних ссылок в markdown-контенте. */
+function rehypeBaseLinks() {
+  return (tree) => {
+    visit(tree, 'element', (node) => {
+      if (node.tagName !== 'a') return;
+      const href = node.properties?.href;
+      if (typeof href !== 'string') return;
+      if (!href.startsWith('/')) return;
+      if (href.startsWith(BASE + '/') || href === BASE) return;
+      node.properties.href = BASE + href;
+    });
+  };
+}
 
 export default defineConfig({
   site: 'https://jokerfrombali.github.io',
@@ -19,5 +36,6 @@ export default defineConfig({
       },
     }),
   ],
+  markdown: { rehypePlugins: [rehypeBaseLinks] },
   compressHTML: true,
 });
