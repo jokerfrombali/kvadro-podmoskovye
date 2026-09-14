@@ -1,7 +1,18 @@
 # Сайт проката внедорожной техники — Astro
 
+**Живая версия:** https://jokerfrombali.github.io/kvadro-podmoskovye/
+
 Статический сайт на **Astro 5**, собранный по семантическому ядру и книге ТЗ из `../out/`.
 **273 страницы, 0 КБ JavaScript на клиенте**, сборка за ~0,5 секунды.
+
+## Развёртывание
+
+Сайт публикуется на GitHub Pages автоматически: каждый push в `main`, затрагивающий `site/**`,
+запускает workflow `.github/workflows/deploy.yml` — сборка Astro и деплой.
+
+Базовый путь берётся из `astro.config.mjs` (`base: '/kvadro-podmoskovye'`). Все внутренние
+ссылки проходят через helper `src/lib/url.ts`, поэтому при переезде на собственный домен
+достаточно убрать `base` — ссылки, canonical, sitemap и robots.txt перестроятся сами.
 
 ## Запуск
 
