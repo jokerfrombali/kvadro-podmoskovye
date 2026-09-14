@@ -6,6 +6,7 @@ import LeadForm from '../components/LeadForm.astro';
 import { COPY } from '../data/copy';
 import { crumbs, childrenOf, siblingsOf, relatedArticles } from '../lib/tree';
 import { PAGE_MD } from '../lib/content';
+import { prices, priceNotice } from '../data/site';
 const { page } = Astro.props;
 const copy = COPY[page.id];
 const mod = PAGE_MD[page.id];
@@ -34,6 +35,18 @@ const toc = copy?.blocks?.map((b:any,i:number)=>({ id:`s${i+1}`, h:b.h })) ?? []
 
 <div class="wrap pb">
   <article class="prose">
+    {page.id === 'P500' && (
+      <section id="prays">
+        <h2>Прайс</h2>
+        <div class="tw"><table>
+          <thead><tr><th>Позиция</th><th>Ед.</th><th>От, ₽</th><th>Комментарий</th></tr></thead>
+          <tbody>{prices.map((pr:any) => (
+            <tr><td><b>{pr.name}</b></td><td>{pr.unit}</td><td>{pr.from.toLocaleString('ru-RU')}</td><td>{pr.note}</td></tr>
+          ))}</tbody>
+        </table></div>
+        <p class="note">{priceNotice}</p>
+      </section>
+    )}
     {Body && (
       <nav class="toc" aria-label="Содержание">
         <b>На этой странице</b>
