@@ -1,0 +1,18 @@
+---
+import { u } from '../lib/url';
+import { site } from '../data/site';
+const { items } = Astro.props as { items: { t: string; u?: string }[] };
+const base = (Astro.site ? Astro.site.origin : new URL(site.domain).origin);
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Главная', item: base + u('/') },
+    ...items.map((i, n) => ({ '@type': 'ListItem', position: n + 2, name: i.t, ...(i.u ? { item: base + u(i.u) } : {}) }))],
+};
+---
+<nav class="bc wrap" aria-label="Хлебные крошки">
+  <ol>
+    <li><a href={u('/')}>Главная</a></li>
+    {items.map(i => <li>{i.u ? <a href={u(i.u)}>{i.t}</a> : <span>{i.t}</span>}</li>)}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+
+# Сохранённые HTML чужих сайтов — не публикуем: это контент правообладателей.
+# Измерения по ним лежат в raw/pages_analysis.json и в книге ТЗ.
+/raw/pages/
+/raw/rkvadro/
+/raw/rkvadro_home.html

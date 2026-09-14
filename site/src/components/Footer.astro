@@ -1,0 +1,72 @@
+---
+import { u } from '../lib/url';
+import { site, nav } from '../data/site';
+import hubs from '../data/hubs.json';
+const year = new Date().getFullYear();
+---
+<footer class="ft dark">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <div class="lg"><span class="lg-m">Ø</span><span>{site.brand}</span></div>
+        <p>Прокат квадроциклов, багги, вездехода и снегоходов в Подмосковье. Корпоративные мероприятия, праздники и семейные заезды.</p>
+        <a href={`tel:${site.phoneHref}`} class="ft-ph">{site.phone}</a>
+        <a href={`mailto:${site.email}`} class="ft-em">{site.email}</a>
+      </div>
+      <div>
+        <b>Разделы</b>
+        <ul>{nav.map(i => <li><a href={u(i.u)}>{i.t}</a></li>)}</ul>
+      </div>
+      <div>
+        <b>Корпоративам</b>
+        <ul>
+          <li><a href={u('/korporativam/na-kvadrociklah/')}>Корпоратив на квадроциклах</a></li>
+          <li><a href={u('/korporativam/timbilding/')}>Тимбилдинг</a></li>
+          <li><a href={u('/korporativam/novogodniy/')}>Новогодний корпоратив</a></li>
+          <li><a href={u('/korporativam/ceny/')}>Цены и сметы</a></li>
+          <li><a href={u('/korporativam/dokumenty/')}>Договор и безнал</a></li>
+          <li><a href={u('/korporativam/keysy/')}>Кейсы</a></li>
+        </ul>
+      </div>
+      <div>
+        <b>База знаний</b>
+        <ul>{hubs.slice(0,5).map(h => <li><a href={u(h.url)}>{h.name}</a></li>)}</ul>
+      </div>
+      <div>
+        <b>О нас</b>
+        <ul>
+          <li><a href={u('/o-baze/')}>О базе</a></li>
+          <li><a href={u('/kontakty/')}>Контакты и проезд</a></li>
+          <li><a href={u('/otzyvy/')}>Отзывы</a></li>
+          <li><a href={u('/akcii/')}>Акции</a></li>
+          <li><a href={u('/blog/')}>Новости</a></li>
+          <li><a href={u('/gde-my/')}>Откуда к нам ехать</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <span>© {year} {site.brand}</span>
+      <span class="ft-addr">{site.addr}</span>
+      <span class="ft-legal">{site.legal}</span>
+    </div>
+  </div>
+</footer>
+<style>
+.ft{padding-block:60px 30px;margin-top:0}
+.ft-top{display:grid;grid-template-columns:1.5fr repeat(4,1fr);gap:30px;padding-bottom:40px;border-bottom:1px solid var(--line-dark)}
+.ft-brand p{font-size:.92rem;max-width:34ch;margin:16px 0}
+.lg{display:flex;align-items:center;gap:10px;font-weight:840;font-size:1.1rem;color:#fff}
+.lg-m{width:30px;height:30px;border-radius:8px;background:var(--acc);display:grid;place-items:center}
+.ft-ph{display:block;font-size:1.2rem;font-weight:760;color:#fff;margin-bottom:4px}
+.ft-em{font-size:.92rem;color:var(--tx-inv-2)}
+.ft-em:hover,.ft-ph:hover{color:var(--acc)}
+.ft-top b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.09em;color:var(--tx-inv-2);margin-bottom:14px}
+.ft-top ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.ft-top li a{font-size:.92rem;color:#D6DCE8}
+.ft-top li a:hover{color:var(--acc)}
+.ft-bot{display:flex;flex-wrap:wrap;gap:8px 26px;padding-top:24px;font-size:.82rem;color:var(--tx-inv-2)}
+.ft-legal{opacity:.6}
+@media(max-width:1100px){.ft-top{grid-template-columns:1fr 1fr 1fr;gap:28px}}
+@media(max-width:760px){.ft-top{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.ft-top{grid-template-columns:1fr}}
+</style>

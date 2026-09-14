@@ -1,0 +1,55 @@
+---
+const { title = 'Оставьте заявку', sub = 'Перезвоним в течение рабочего дня, уточним дату и подберём формат.', b2b = false } = Astro.props;
+---
+<section class="lf dark" id="zayavka">
+  <div class="wrap lf-in">
+    <div>
+      <p class="eyebrow">Заявка</p>
+      <h2>{title}</h2>
+      <p class="lede">{sub}</p>
+      <ul class="lf-l">
+        <li>Ответим на вопросы до бронирования — без обязательств</li>
+        <li>Подберём трассу и технику под состав группы</li>
+        {b2b && <li>Пришлём смету и проект договора</li>}
+      </ul>
+    </div>
+    <form class="lf-f" method="post" action="#" novalidate>
+      <div class="lf-row">
+        <label>Имя<input type="text" name="name" required autocomplete="name" placeholder="Как к вам обращаться" /></label>
+        <label>Телефон<input type="tel" name="phone" required autocomplete="tel" placeholder="+7 (___) ___-__-__" /></label>
+      </div>
+      {b2b && <div class="lf-row">
+        <label>Компания<input type="text" name="company" placeholder="Название" /></label>
+        <label>Численность<input type="number" name="people" min="1" placeholder="Сколько человек" /></label>
+      </div>}
+      <div class="lf-row">
+        <label>Желаемая дата<input type="date" name="date" /></label>
+        {!b2b && <label>Сколько человек<input type="number" name="people" min="1" placeholder="Например, 4" /></label>}
+      </div>
+      <label>Комментарий<textarea name="msg" rows="3" placeholder="Формат, пожелания, вопросы"></textarea></label>
+      <button type="submit" class="btn btn-p">{b2b ? 'Запросить предложение' : 'Отправить заявку'}</button>
+      <p class="lf-pp">Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных.</p>
+      <p class="lf-dev">Форма не подключена к обработчику — требование T18/T19 в листе «22 Техника и CMS».</p>
+    </form>
+  </div>
+</section>
+<style>
+.lf{padding-block:clamp(50px,7vw,88px)}
+.lf-in{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,5vw,68px);align-items:start}
+.lf-l{list-style:none;padding:0;margin:24px 0 0;display:flex;flex-direction:column;gap:11px}
+.lf-l li{position:relative;padding-left:27px;color:var(--tx-inv-2);font-size:.95rem}
+.lf-l li::before{content:'';position:absolute;left:0;top:7px;width:14px;height:8px;border-left:2px solid var(--acc);border-bottom:2px solid var(--acc);transform:rotate(-45deg)}
+.lf-f{background:var(--ink-2);border:1px solid var(--line-dark);border-radius:var(--r-lg);padding:clamp(22px,3vw,34px);display:flex;flex-direction:column;gap:15px}
+.lf-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+label{display:flex;flex-direction:column;gap:7px;font-size:.84rem;font-weight:620;color:var(--tx-inv-2)}
+input,textarea{background:var(--ink);border:1px solid var(--line-dark);border-radius:var(--r-sm);
+  padding:13px 15px;color:#fff;font:inherit;font-size:.97rem;font-weight:400;width:100%}
+input::placeholder,textarea::placeholder{color:#5B6478}
+input:focus,textarea:focus{border-color:var(--acc);outline:none}
+textarea{resize:vertical}
+.lf-f .btn{margin-top:4px}
+.lf-pp{font-size:.78rem;color:#6B7488;margin:0}
+.lf-dev{font-size:.74rem;color:var(--warn);margin:0;padding-top:8px;border-top:1px dashed var(--line-dark)}
+@media(max-width:900px){.lf-in{grid-template-columns:1fr}}
+@media(max-width:520px){.lf-row{grid-template-columns:1fr}}
+</style>

@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import PageCommercial from '../components/PageCommercial.astro';
+import PageHub from '../components/PageHub.astro';
+import PageArticle from '../components/PageArticle.astro';
+import { PAGES, HUBS, ARTICLES } from '../lib/tree';
+import { site } from '../data/site';
+import { u } from '../lib/url';
+
+export async function getStaticPaths() {
+  const p = PAGES.filter(x => x.url !== '/').map(x => ({
+    params: { slug: x.url.replace(/^\/|\/$/g, '') }, props: { kind: 'page', data: x },
+  }));
+  const h = HUBS.map(x => ({
+    params: { slug: x.url.replace(/^\/|\/$/g, '') }, props: { kind: 'hub', data: x },
+  }));
+  const a = ARTICLES.map(x => ({
+    params: { slug: x.url.replace(/^\/|\/$/g, '') }, props: { kind: 'article', data: x },
+  }));
+  return [...p, ...h, ...a];
+}
+
+const { kind, data } = Astro.props;
+const base = (Astro.site ? Astro.site.origin : new URL(site.domain).origin);
+let jsonld: object[] = [];
+if (kind === 'article') {
+  jsonld = [{
+    '@context': 'https://schema.org', '@type': 'Article',
+    headline: data.h1, description: data.description,
+    mainEntityOfPage: base + u(data.url), inLanguage: 'ru-RU',
+    publisher: { '@type': 'Organization', name: site.brand, url: base + u('/') },
+    articleSection: data.hubName,
+  }];
+} else if (kind === 'page' && /услуга|B2B-услуга|карточка/.test(data.type)) {
+  jsonld = [{
+    '@context': 'https://schema.org', '@type': 'Service',
+    name: data.h1, description: data.description,
+    serviceType: data.h1, url: base + u(data.url),
+    areaServed: { '@type': 'AdministrativeArea', name: 'Московская область' },
+    provider: { '@type': 'LocalBusiness', name: site.brand, url: base + u('/') },
+  }];
+}
+---
+<Base title={data.title} description={data.description} url={data.url} jsonld={jsonld}
+      ogType={kind === 'article' ? 'article' : 'website'}>
+  {kind === 'page' && <PageCommercial page={data} />}
+  {kind === 'hub' && <PageHub hub={data} />}
+  {kind === 'article' && <PageArticle art={data} />}
+</Base>

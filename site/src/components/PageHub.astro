@@ -1,0 +1,47 @@
+---
+import { u } from '../lib/url';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { articlesOf, HUBS } from '../lib/tree';
+const { hub } = Astro.props;
+const arts = articlesOf(hub.id).sort((a:any,b:any) => a.queue - b.queue || b.freq - a.freq);
+const others = HUBS.filter(h => h.id !== hub.id);
+---
+<Breadcrumbs items={[{ t:'База знаний', u:'/baza-znaniy/' }, { t:hub.name }]} />
+<section class="hh">
+  <div class="wrap">
+    <span class="chip chip-a">Хаб · {arts.length} материалов</span>
+    <h1>{hub.h1}</h1>
+    <p class="lede hh-l">{hub.description}</p>
+  </div>
+</section>
+<section class="sec-t">
+  <div class="wrap">
+    <div class="grid g2">
+      {arts.map((a:any) => (
+        <a href={u(a.url)} class="card art">
+          <h3>{a.h1}</h3>
+          <p>{a.description}</p>
+          <span class="card-a">Читать →</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>
+<section class="sec-t soft">
+  <div class="wrap">
+    <h2 class="oh">Другие разделы базы знаний</h2>
+    <div class="hb-l">{others.map(h => <a href={u(h.url)}>{h.name}</a>)}</div>
+  </div>
+</section>
+<LeadForm />
+<style>
+.hh{padding-block:clamp(26px,4vw,48px) clamp(12px,2vw,24px)}
+.hh h1{margin:14px 0 16px;max-width:22ch}
+.hh-l{max-width:68ch}
+.art h3{font-size:1.12rem;margin-bottom:8px}
+.oh{font-size:1.35rem;margin-bottom:20px}
+.hb-l{display:flex;flex-wrap:wrap;gap:9px}
+.hb-l a{padding:10px 17px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:.92rem;font-weight:580}
+.hb-l a:hover{border-color:var(--acc);color:var(--acc)}
+</style>

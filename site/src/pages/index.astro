@@ -1,0 +1,357 @@
+---
+import { u } from '../lib/url';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { site, facts, usp, steps, routes, prices, priceNotice } from '../data/site';
+
+const services = [
+  { u:'/uslugi/prokat-kvadrociklov/', i:'quad', t:'Квадроциклы', d:'Семь моделей от лёгких 400 кубов до флагмана. Права не нужны, инструктаж и экипировка в цене.', p:'от 6 000 ₽/час' },
+  { u:'/uslugi/prokat-baggi/', i:'users', t:'Багги', d:'На 2 и 4 места. Руль и педали как в автомобиле — равновесие держать не нужно.', p:'от 10 000 ₽/час' },
+  { u:'/uslugi/prokat-snegohodov/', i:'snow', t:'Снегоходы', d:'BRP Ski-Doo 1200 трёх типов. Зимний сезон с декабря по март.', p:'от 10 000 ₽/час' },
+  { u:'/uslugi/prokat-vezdehoda/', i:'route', t:'Вездеход Tinger', d:'Гусеничный и плавающий. Едет в любую погоду и не требует навыков.', p:'от 10 000 ₽/час' },
+  { u:'/uslugi/detskiy-prokat/', i:'shield', t:'Детский прокат', d:'От 6 лет на отдельной площадке с ограничением скорости и детской экипировкой.', p:'от 5 000 ₽/час' },
+  { u:'/uslugi/sertifikaty/', i:'gift', t:'Сертификаты', d:'Подарок впечатлением: выбирает получатель, дату можно перенести.', p:'от 5 000 ₽' },
+];
+
+const occasions = [
+  { u:'/korporativam/', t:'Корпоратив и тимбилдинг', d:'От 6 до 60 человек, договор и безнал', big:true },
+  { u:'/povody/den-rozhdeniya/', t:'День рождения', d:'Заезд, беседка с мангалом, баня' },
+  { u:'/povody/malchishnik/', t:'Мальчишник', d:'Соревнование, баня и барбекю' },
+  { u:'/povody/svidanie/', t:'Свидание для двоих', d:'Закатный маршрут и ужин' },
+  { u:'/povody/semeynyy-vyhodnoy/', t:'Семейный выходной', d:'Детская зона и бассейн рядом' },
+  { u:'/povody/vstrecha-druzey/', t:'Встреча друзей', d:'Групповой заезд и зачёт по командам' },
+];
+
+const b2bLinks = [
+  { u:'/korporativam/na-kvadrociklah/', t:'На квадроциклах' },
+  { u:'/korporativam/na-snegohodah/', t:'На снегоходах' },
+  { u:'/korporativam/timbilding/', t:'Тимбилдинг' },
+  { u:'/korporativam/kvadro-kvest/', t:'Квадро-квест' },
+  { u:'/korporativam/novogodniy/', t:'Новогодний корпоратив' },
+  { u:'/korporativam/malaya-gruppa/', t:'Малая команда 6–15' },
+  { u:'/korporativam/srednyaya-gruppa/', t:'Группа 15–30' },
+  { u:'/korporativam/bolshaya-gruppa/', t:'Группа 30–60' },
+  { u:'/korporativam/ceny/', t:'Цены и сметы' },
+  { u:'/korporativam/dokumenty/', t:'Договор и безнал' },
+  { u:'/korporativam/keysy/', t:'Кейсы' },
+  { u:'/korporativam/ploshchadka/', t:'Площадка' },
+];
+
+const faq = [
+  { q:'Нужны ли права на квадроцикл?', a:'На нашей закрытой территории с инструктором — нет. Удостоверение тракториста-машиниста требуется для дорог общего пользования и для своей техники. От гостя нужен паспорт, трезвое состояние и подписанный инструктаж.' },
+  { q:'Со скольки лет можно кататься?', a:'За руль детской техники — с 6 лет на отдельной площадке рядом с инструктором и в присутствии родителя. На взрослую технику возрастной порог выше, точные значения — на странице детского проката.' },
+  { q:'А если я никогда не водил?', a:'Так приезжает большинство. Перед маршрутом — инструктаж и учебный круг на малой скорости. Группа идёт в темпе самого медленного участника, инструктор рядом.' },
+  { q:'Что надеть и что взять с собой?', a:'Экипировку выдаём мы: шлем, защита корпуса, наколенники, перчатки. От вас — удобная одежда, закрытая обувь и комплект на смену. Подробный чек-лист есть в базе знаний.' },
+  { q:'Что если техника застрянет?', a:'Вытаскиваем сами, без доплат. На маршруте идут ведущий и замыкающий инструкторы.' },
+  { q:'Работаете ли с юридическими лицами?', a:'Да. Договор, счёт, акт, оплата по безналичному расчёту и закрывающие документы для бухгалтерии. Порядок описан на отдельной странице для компаний.' },
+  { q:'Что будет при плохой погоде?', a:'Заезды идут в дождь и мороз — экипировка это учитывает. Переносим только при грозе, шквале или обледенении трассы. Вездеход работает в любую погоду.' },
+];
+
+const jsonld = [
+  { '@context':'https://schema.org','@type':'FAQPage',
+    mainEntity: faq.map(f => ({ '@type':'Question', name:f.q, acceptedAnswer:{ '@type':'Answer', text:f.a } })) },
+  { '@context':'https://schema.org','@type':'ItemList', name:'Услуги проката внедорожной техники',
+    itemListElement: services.map((s,i) => ({ '@type':'ListItem', position:i+1, name:s.t, url: (Astro.site ? Astro.site.origin : new URL(site.domain).origin) + u(s.u) })) },
+];
+---
+<Base
+  title="Прокат квадроциклов, снегоходов и багги в Подмосковье — 50 км от МКАД"
+  description="Прокат квадроциклов, багги и снегоходов на своей базе в Истринском округе: 100 км трасс, экипировка и инструктор в цене. Корпоративы и праздники. Права не нужны."
+  jsonld={jsonld}>
+
+  <!-- 1. ГЕРОЙ -->
+  <section class="hero dark">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <p class="eyebrow">Истринский округ · 50 км от МКАД по Новой Риге</p>
+      <h1>Прокат квадроциклов, багги и снегоходов в Подмосковье</h1>
+      <p class="lede hero-l">Собственная база со 100 км подготовленных трасс. Четыре маршрута — от спокойных 15 км для первого раза до 40 км с полным набором бездорожья. Экипировка и инструктор включены, права не нужны.</p>
+      <div class="hero-cta">
+        <a href="#zayavka" class="btn btn-p">Оставить заявку</a>
+        <a href={u('/korporativam/')} class="btn btn-g">Корпоративам</a>
+      </div>
+      <ul class="hero-tr">
+        <li><Icon n="check" /> Права не нужны</li>
+        <li><Icon n="check" /> Экипировка в цене</li>
+        <li><Icon n="check" /> Инструктор на маршруте</li>
+        <li><Icon n="check" /> Работаем круглый год</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2. ЦИФРЫ -->
+  <section class="fct">
+    <div class="wrap fct-in">
+      {facts.map(f => <div class="fct-i"><b>{f.n}</b><span>{f.t}</span></div>)}
+    </div>
+  </section>
+
+  <!-- 3. ТЕХНИКА И УСЛУГИ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Техника</p>
+        <h2>На чём можно поехать</h2>
+        <p class="lede">Весь парк обслуживается перед каждым заездом. Подбираем модель по росту, весу и опыту — мощнее не значит лучше для первого раза.</p>
+      </div>
+      <div class="grid g3">
+        {services.map(s => (
+          <a href={u(s.u)} class="card">
+            <div class="ico"><Icon n={s.i} /></div>
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+            <div class="svc-p">{s.p}</div>
+            <span class="card-a">Подробнее <Icon n="arrow" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. КОРПОРАТИВНЫЙ БЛОК -->
+  <section class="sec b2b dark">
+    <div class="wrap">
+      <div class="b2b-top">
+        <div>
+          <p class="eyebrow">Для компаний</p>
+          <h2>Корпоратив, который запомнится дольше, чем банкет</h2>
+          <p class="lede">Команда не сидит за столом, а проходит маршрут вместе. Берём на себя сценарий, инструкторов, экипировку, питание и документы для бухгалтерии. От 6 до 60 участников.</p>
+          <div class="b2b-cta">
+            <a href={u('/korporativam/')} class="btn btn-p">Программы для компаний</a>
+            <a href={u('/korporativam/ceny/')} class="btn btn-g">Посчитать смету</a>
+          </div>
+        </div>
+        <ul class="b2b-adv">
+          <li><b>Договор и безнал</b>Счёт, акт и закрывающие документы</li>
+          <li><b>План Б по погоде</b>Вездеход едет, когда остальное стоит</li>
+          <li><b>Параллельная программа</b>Есть чем занять тех, кто ждёт своей волны</li>
+          <li><b>Банкет после, не до</b>Сначала техника, потом стол — иначе не пустим за руль</li>
+        </ul>
+      </div>
+      <div class="b2b-links">
+        {b2bLinks.map(l => <a href={u(l.u)}>{l.t}</a>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ПОВОДЫ -->
+  <section class="sec soft">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Поводы</p>
+        <h2>С чем к нам приезжают</h2>
+        <p class="lede">Под каждый повод — свой сценарий и тайминг. Не просто «покататься час», а собранная программа на день.</p>
+      </div>
+      <div class="grid g3">
+        {occasions.map(o => (
+          <a href={u(o.u)} class={o.big ? 'card occ occ-b' : 'card occ'}>
+            <h3>{o.t}</h3>
+            <p>{o.d}</p>
+            <span class="card-a">Смотреть <Icon n="arrow" /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ПОЧЕМУ МЫ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Почему к нам</p>
+        <h2>Что входит в заезд по умолчанию</h2>
+      </div>
+      <div class="grid g3">
+        {usp.map(u => (
+          <div class="card">
+            <div class="ico"><Icon n={u.i} /></div>
+            <h3>{u.t}</h3>
+            <p>{u.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. МАРШРУТЫ -->
+  <section class="sec dark">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Маршруты</p>
+        <h2>Четыре трассы, 100 километров</h2>
+        <p class="lede">Выбираете не «сколько часов», а какой рельеф и какую нагрузку хотите. В первый раз рекомендуем «Начинающий».</p>
+      </div>
+      <div class="grid g4">
+        {routes.map(r => (
+          <a href={u('/marshruty/')} class="card rt">
+            <div class="rt-lvl">{Array.from({length:4}).map((_,i) => <i class={i < r.lvl ? 'on' : ''}></i>)}</div>
+            <h3>{r.name}</h3>
+            <div class="rt-m"><span>{r.km} км</span><span>{r.h}</span></div>
+            <p>{r.d}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. КАК ПРОХОДИТ -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Как это проходит</p>
+        <h2>Шесть шагов от парковки до бани</h2>
+        <p class="lede">Заезд на час занимает около двух с половиной часов вместе с экипировкой, инструктажем и душем. Закладывайте время с запасом.</p>
+      </div>
+      <ol class="stp">
+        {steps.map((s,i) => (
+          <li><span class="stp-n">{i+1}</span><div><h3>{s.t}</h3><p>{s.d}</p></div></li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- 9. ЦЕНЫ -->
+  <section class="sec soft">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Цены</p>
+        <h2>Сколько стоит</h2>
+        <p class="lede">В стоимость входит техника, топливо, экипировка, инструктаж и сопровождение инструктора. Отдельно оплачиваются питание, баня и фотосъёмка.</p>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Техника</th><th>Стоимость</th><th>Комментарий</th></tr></thead>
+          <tbody>
+            {prices.map(p => (
+              <tr><td><b>{p.name}</b></td><td class="pr-v">от {p.from.toLocaleString('ru-RU')} ₽ / {p.unit}</td><td class="pr-n">{p.note}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div class="note"><b>Плейсхолдер.</b> {priceNotice}</div>
+      <div class="pr-cta">
+        <a href={u('/ceny/')} class="btn btn-g">Полный прайс</a>
+        <a href={u('/korporativam/ceny/')} class="btn btn-p">Смета для компании</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. FAQ -->
+  <section class="sec">
+    <div class="wrap-n">
+      <div class="sec-head">
+        <p class="eyebrow">Вопросы</p>
+        <h2>Что спрашивают чаще всего</h2>
+      </div>
+      {faq.map(f => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}
+      <p class="faq-more">Развёрнутые ответы — в <a href={u('/baza-znaniy/')}>базе знаний</a>: 150 материалов о правах, безопасности, экипировке, маршрутах и организации корпоративов.</p>
+    </div>
+  </section>
+
+  <!-- 11. ГДЕ МЫ -->
+  <section class="sec soft">
+    <div class="wrap geo-in">
+      <div>
+        <p class="eyebrow">Как добраться</p>
+        <h2>50 км от МКАД по Новорижскому шоссе</h2>
+        <p class="lede">База в Истринском округе. Удобно из Красногорска, Нахабина, Дедовска, Звенигорода, Одинцова и Солнечногорска. Парковка на территории, для автобуса есть отдельное место.</p>
+        <div class="geo-l">
+          <a href={u('/gde-my/istra/')}>Из Истры</a><a href={u('/gde-my/krasnogorsk-nahabino/')}>Красногорск и Нахабино</a>
+          <a href={u('/gde-my/zvenigorod-odincovo/')}>Звенигород и Одинцово</a><a href={u('/gde-my/solnechnogorsk-klin/')}>Солнечногорск и Клин</a>
+          <a href={u('/gde-my/iz-moskvy/')}>Из Москвы</a><a href={u('/gde-my/novorizhskoe-shosse/')}>По Новой Риге</a>
+        </div>
+      </div>
+      <div class="geo-c">
+        <div class="ico"><Icon n="pin" /></div>
+        <h3>Адрес</h3>
+        <p>{site.addr}</p>
+        <h3 class="geo-h2">Режим работы</h3>
+        <p>{site.hours}</p>
+        <a href={`tel:${site.phoneHref}`} class="geo-ph"><Icon n="phone" /> {site.phone}</a>
+      </div>
+    </div>
+  </section>
+
+  <LeadForm />
+</Base>
+
+<style>
+.hero{position:relative;padding-block:clamp(70px,11vw,140px);overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(1100px 560px at 78% -8%,rgba(255,107,24,.24),transparent 62%),
+  radial-gradient(760px 480px at 8% 108%,rgba(31,120,190,.18),transparent 60%),
+  linear-gradient(170deg,#0C0F14 0%,#141A24 55%,#0C0F14 100%)}
+.hero-bg::after{content:'';position:absolute;inset:0;opacity:.35;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(70% 60% at 50% 40%,#000,transparent)}
+.hero-in{position:relative}
+.hero h1{max-width:17ch;margin-bottom:22px}
+.hero-l{font-size:clamp(1.05rem,1.75vw,1.26rem);max-width:64ch}
+.hero-cta{display:flex;gap:13px;flex-wrap:wrap;margin:34px 0 30px}
+.hero-tr{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:12px 26px}
+.hero-tr li{display:flex;align-items:center;gap:8px;font-size:.93rem;color:var(--tx-inv-2);font-weight:560}
+.hero-tr :global(svg){width:17px;height:17px;color:var(--acc);flex:none}
+
+.fct{border-bottom:1px solid var(--line);background:var(--paper)}
+.fct-in{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+.fct-i{background:var(--paper);padding:26px 18px;text-align:center}
+.fct-i b{display:block;font-size:clamp(1.55rem,3vw,2.15rem);font-weight:820;letter-spacing:-.03em;color:var(--acc-dk)}
+.fct-i span{font-size:.87rem;color:var(--tx-2)}
+@media(max-width:700px){.fct-in{grid-template-columns:repeat(2,1fr)}}
+
+.svc-p{margin-top:14px;font-weight:760;color:var(--tx);font-size:1.02rem}
+.card{display:flex;flex-direction:column}
+.card .card-a{margin-top:auto;padding-top:14px}
+.card-a :global(svg){width:15px;height:15px;transition:transform .18s}
+a.card:hover .card-a :global(svg){transform:translateX(4px)}
+
+.b2b{background:linear-gradient(160deg,#111722 0%,#0C0F14 100%)}
+.b2b-top{display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(30px,5vw,64px);align-items:start;margin-bottom:38px}
+.b2b-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.b2b-adv{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2px}
+.b2b-adv li{padding:15px 0;border-bottom:1px solid var(--line-dark);color:var(--tx-inv-2);font-size:.93rem}
+.b2b-adv b{display:block;color:#fff;font-size:1rem;margin-bottom:3px}
+.b2b-links{display:flex;flex-wrap:wrap;gap:9px;padding-top:30px;border-top:1px solid var(--line-dark)}
+.b2b-links a{padding:9px 16px;border-radius:999px;border:1px solid var(--line-dark);
+  font-size:.9rem;font-weight:580;color:#D6DCE8;transition:.16s}
+.b2b-links a:hover{border-color:var(--acc);color:var(--acc);background:rgba(255,107,24,.08)}
+@media(max-width:860px){.b2b-top{grid-template-columns:1fr}}
+
+.occ h3{font-size:1.18rem}
+.occ-b{border-color:var(--acc);background:linear-gradient(150deg,var(--acc-lt),#fff 70%)}
+.occ-b h3{color:var(--acc-dk)}
+
+.rt{background:var(--ink-2);border-color:var(--line-dark)}
+.rt-lvl{display:flex;gap:4px;margin-bottom:14px}
+.rt-lvl i{width:22px;height:4px;border-radius:2px;background:rgba(255,255,255,.14)}
+.rt-lvl i.on{background:var(--acc)}
+.rt-m{display:flex;gap:14px;margin:8px 0 12px}
+.rt-m span{font-size:.84rem;font-weight:680;color:var(--acc);background:rgba(255,107,24,.12);padding:4px 10px;border-radius:6px}
+
+.stp{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(292px,1fr));gap:clamp(18px,2.4vw,30px);counter-reset:s}
+.stp li{display:flex;gap:16px;align-items:flex-start}
+.stp-n{flex:none;width:38px;height:38px;border-radius:11px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-weight:760;font-size:1rem}
+.stp h3{margin-bottom:5px}
+.stp p{margin:0;color:var(--tx-2);font-size:.94rem}
+
+.pr-v{font-weight:760;white-space:nowrap}
+.pr-n{color:var(--tx-3);font-size:.9rem}
+.pr-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.faq-more{margin-top:28px;color:var(--tx-2);font-size:.96rem}
+.faq-more a{color:var(--acc-dk);font-weight:640}
+
+.geo-in{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(26px,4vw,54px);align-items:start}
+.geo-l{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
+.geo-l a{padding:9px 15px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:.89rem;font-weight:580}
+.geo-l a:hover{border-color:var(--acc);color:var(--acc)}
+.geo-c{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:28px}
+.geo-c h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-3);margin-bottom:6px}
+.geo-h2{margin-top:20px!important}
+.geo-c p{color:var(--tx);margin-bottom:0;font-size:.97rem}
+.geo-ph{display:inline-flex;align-items:center;gap:9px;margin-top:22px;font-weight:760;font-size:1.06rem}
+.geo-ph :global(svg){width:18px;height:18px;color:var(--acc)}
+.geo-ph:hover{color:var(--acc)}
+@media(max-width:860px){.geo-in{grid-template-columns:1fr}}
+</style>

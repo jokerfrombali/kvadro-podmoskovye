@@ -1,0 +1,96 @@
+---
+import { u } from '../lib/url';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LeadForm from '../components/LeadForm.astro';
+import Icon from '../components/Icon.astro';
+import { articlesOf } from '../lib/tree';
+const { art } = Astro.props;
+const h2s = art.blocks.filter((b:any) => b.level === 2);
+const sameHub = articlesOf(art.hub).filter((a:any) => a.id !== art.id).slice(0, 5);
+let n = 0;
+const blocks = art.blocks.map((b:any) => { if (b.level === 2) n++; return { ...b, id: `h${n}` }; });
+---
+<Breadcrumbs items={[{ t:'База знаний', u:'/baza-znaniy/' }, { t:art.hubName, u:art.hubUrl }, { t:art.h1 }]} />
+
+<div class="wrap ab">
+  <article class="prose ar">
+    <h1>{art.h1}</h1>
+    <p class="ar-lede">{art.description}</p>
+    <div class="ar-meta">
+      <span><Icon n="book" /> {art.hubName}</span>
+      <span><Icon n="clock" /> ~{Math.round((art.vmin + art.vmax) / 2 / 1500)} мин чтения</span>
+    </div>
+
+    {h2s.length > 3 && (
+      <nav class="toc" aria-label="Содержание">
+        <b>Содержание</b>
+        <ol>{blocks.filter((b:any) => b.level === 2).map((b:any) => <li><a href={`#${b.id}`}>{b.h}</a></li>)}</ol>
+      </nav>
+    )}
+
+    <div class="note">
+      <b>Структура утверждена, текст в работе.</b> Заголовки, границы темы, объём ({art.vmin.toLocaleString('ru-RU')}–{art.vmax.toLocaleString('ru-RU')} знаков)
+      и задачи разделов заданы карточкой ТЗ <b>{art.id}</b>. Под каждым заголовком — задача раздела для автора.
+    </div>
+
+    {blocks.map((b:any) => (
+      b.level === 2
+        ? <section id={b.id}><h2>{b.h}</h2><p class="ar-note">{b.note}</p></section>
+        : <><h3>{b.h}</h3><p class="ar-note">{b.note}</p></>
+    ))}
+
+    <section class="ar-src">
+      <h2>Что нужно для публикации</h2>
+      <dl>
+        <dt>Собственная польза</dt><dd>{art.own}</dd>
+        <dt>Медиа</dt><dd>{art.media}</dd>
+        {art.facts && art.facts !== '—' && <><dt>Факты на проверку</dt><dd>{art.facts}</dd></>}
+      </dl>
+    </section>
+  </article>
+
+  <aside class="side">
+    <div class="side-c">
+      <div class="ico"><Icon n="phone" /></div>
+      <h3>{art.cta}</h3>
+      <p>Ответим на вопросы до бронирования — без обязательств.</p>
+      <a href="#zayavka" class="btn btn-p btn-sm">Оставить заявку</a>
+    </div>
+    {sameHub.length > 0 && (
+      <div class="side-n"><b>Ещё в разделе «{art.hubName}»</b>
+        <ul>{sameHub.map((a:any) => <li><a href={u(a.url)}>{a.h1}</a></li>)}</ul></div>
+    )}
+    <div class="side-n"><b>Запросы страницы</b>
+      <p class="side-q">Основной: <b>{art.primary}</b>{art.exact != null && <> · {art.exact} в кавычках</>}</p>
+      {art.support.length > 0 && <ul>{art.support.slice(0,6).map((s:any) => <li>{s.q}</li>)}</ul>}
+    </div>
+  </aside>
+</div>
+<LeadForm />
+<style>
+.ab{display:grid;grid-template-columns:1fr 310px;gap:clamp(28px,4vw,56px);
+  padding-block:clamp(16px,2vw,28px) clamp(50px,7vw,86px);align-items:start}
+.ar h1{font-size:clamp(1.85rem,4vw,2.85rem);margin-bottom:18px}
+.ar-lede{font-size:clamp(1.05rem,1.7vw,1.2rem);color:var(--tx-2);margin-bottom:18px}
+.ar-meta{display:flex;flex-wrap:wrap;gap:20px;padding-bottom:24px;border-bottom:1px solid var(--line);
+  margin-bottom:28px;font-size:.87rem;color:var(--tx-3)}
+.ar-meta span{display:flex;align-items:center;gap:7px}
+.ar-meta :global(svg){width:15px;height:15px}
+.ar-note{color:var(--tx-3);font-size:.98rem;border-left:2px solid var(--line);padding-left:16px}
+.ar-src{margin-top:3em;padding-top:1.6em;border-top:1px solid var(--line)}
+.ar-src dl{margin:0}
+.ar-src dt{font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.07em;color:var(--tx-3);margin-top:16px}
+.ar-src dd{margin:5px 0 0;color:var(--tx-2);font-size:.96rem}
+.side{position:sticky;top:92px;display:flex;flex-direction:column;gap:18px}
+.side-c{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.side-c h3{margin-bottom:8px;font-size:1.05rem}
+.side-c p{font-size:.9rem;color:var(--tx-2);margin-bottom:16px}
+.side-n{border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
+.side-n b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-3);margin-bottom:12px}
+.side-n ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.side-n li,.side-n a{font-size:.9rem;color:var(--tx-2);line-height:1.4}
+.side-n a:hover{color:var(--acc)}
+.side-q{font-size:.88rem;color:var(--tx-2);margin-bottom:12px}
+.side-q b{display:inline;font-size:.88rem;text-transform:none;letter-spacing:0;color:var(--tx)}
+@media(max-width:980px){.ab{grid-template-columns:1fr}.side{position:static}}
+</style>

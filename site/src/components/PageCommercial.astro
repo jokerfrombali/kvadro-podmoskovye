@@ -1,0 +1,121 @@
+---
+import { u } from '../lib/url';
+import Icon from '../components/Icon.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import LeadForm from '../components/LeadForm.astro';
+import { COPY } from '../data/copy';
+import { crumbs, childrenOf, siblingsOf, relatedArticles } from '../lib/tree';
+const { page } = Astro.props;
+const copy = COPY[page.id];
+const kids = childrenOf(page.id);
+const sibs = kids.length ? [] : siblingsOf(page);
+const rel = relatedArticles(page, 4);
+const isB2B = page.url.startsWith('/korporativam');
+const toc = copy?.blocks?.map((b:any,i:number)=>({ id:`s${i+1}`, h:b.h })) ?? [];
+---
+<Breadcrumbs items={crumbs(page)} />
+
+<section class="ph">
+  <div class="wrap">
+    <span class="chip chip-a">{page.type.replace('B2B-','Для компаний · ')}</span>
+    <h1>{page.h1}</h1>
+    <p class="lede ph-l">{copy?.lede ?? page.description}</p>
+    <div class="ph-cta">
+      <a href="#zayavka" class="btn btn-p">{isB2B ? 'Запросить предложение' : 'Оставить заявку'}</a>
+      {isB2B ? <a href={u('/korporativam/ceny/')} class="btn btn-g">Посчитать смету</a>
+             : <a href={u('/ceny/')} class="btn btn-g">Цены</a>}
+    </div>
+  </div>
+</section>
+
+<div class="wrap pb">
+  <article class="prose">
+    {toc.length > 2 && (
+      <nav class="toc" aria-label="Содержание">
+        <b>На этой странице</b>
+        <ol>{toc.map((t:any) => <li><a href={`#${t.id}`}>{t.h}</a></li>)}</ol>
+      </nav>
+    )}
+
+    {copy ? copy.blocks.map((b:any,i:number) => (
+      <section id={`s${i+1}`}>
+        <h2>{b.h}</h2>
+        {b.p && <p>{b.p}</p>}
+        {b.list && <ul>{b.list.map((l:string) => <li>{l}</li>)}</ul>}
+        {b.table && (
+          <div class="tw"><table><tbody>
+            {b.table.map((r:[string,string]) => <tr><td><b>{r[0]}</b></td><td>{r[1]}</td></tr>)}
+          </tbody></table></div>
+        )}
+      </section>
+    )) : (
+      <>
+        <h2>Коротко о странице</h2>
+        <p>{page.description}</p>
+        <div class="note">
+          <b>Текст в работе.</b> Структура и метаданные страницы утверждены в книге ТЗ.
+          Продающий текст пишется по карточке — см. лист «05 ТЗ страниц», page_id <b>{page.id}</b>.
+          Основание страницы: {page.rationale}
+        </div>
+        {page.keys?.length > 0 && (
+          <>
+            <h2>Что здесь нужно раскрыть</h2>
+            <p>Страница отвечает на эти запросы пользователей — каждый должен быть закрыт по смыслу, без дословного повторения формулировок:</p>
+            <ul>{page.keys.slice(0,8).map((k:any) => <li>{k.q}</li>)}</ul>
+          </>
+        )}
+      </>
+    )}
+
+    {copy?.faq && (
+      <section id="faq">
+        <h2>Вопросы и ответы</h2>
+        {copy.faq.map((f:[string,string]) => <details><summary>{f[0]}</summary><p>{f[1]}</p></details>)}
+      </section>
+    )}
+  </article>
+
+  <aside class="side">
+    <div class="side-c">
+      <div class="ico"><Icon n={isB2B ? 'users' : 'phone'} /></div>
+      <h3>{isB2B ? 'Запросить смету' : 'Забронировать дату'}</h3>
+      <p>{isB2B ? 'Пришлём расчёт на вашу численность и проект договора.' : 'Уточним свободные даты и подберём формат под компанию.'}</p>
+      <a href="#zayavka" class="btn btn-p btn-sm">Оставить заявку</a>
+    </div>
+    {kids.length > 0 && (
+      <div class="side-n"><b>В этом разделе</b>
+        <ul>{kids.map(k => <li><a href={u(k.url)}>{k.h1}</a></li>)}</ul></div>
+    )}
+    {sibs.length > 0 && (
+      <div class="side-n"><b>Смотрите также</b>
+        <ul>{sibs.map(k => <li><a href={u(k.url)}>{k.h1}</a></li>)}</ul></div>
+    )}
+    {rel.length > 0 && (
+      <div class="side-n"><b>В базе знаний</b>
+        <ul>{rel.map((a:any) => <li><a href={u(a.url)}>{a.h1}</a></li>)}</ul></div>
+    )}
+  </aside>
+</div>
+
+<LeadForm b2b={isB2B}
+  title={isB2B ? 'Запросите программу и смету' : 'Оставьте заявку'}
+  sub={isB2B ? 'Пришлём расчёт на вашу численность, программу дня и проект договора.' : 'Перезвоним в течение рабочего дня, уточним дату и подберём формат.'} />
+
+<style>
+.ph{padding-block:clamp(26px,4vw,48px) clamp(24px,3vw,36px)}
+.ph h1{margin:14px 0 18px;max-width:20ch}
+.ph-l{max-width:66ch;font-size:clamp(1rem,1.6vw,1.17rem)}
+.ph-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.pb{display:grid;grid-template-columns:1fr 320px;gap:clamp(28px,4vw,56px);
+  padding-bottom:clamp(50px,7vw,86px);align-items:start}
+.side{position:sticky;top:92px;display:flex;flex-direction:column;gap:18px}
+.side-c{background:var(--paper-2);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.side-c h3{margin-bottom:8px;font-size:1.08rem}
+.side-c p{font-size:.92rem;color:var(--tx-2);margin-bottom:16px}
+.side-n{border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
+.side-n b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;color:var(--tx-3);margin-bottom:12px}
+.side-n ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px}
+.side-n a{font-size:.92rem;color:var(--tx-2);line-height:1.4}
+.side-n a:hover{color:var(--acc)}
+@media(max-width:980px){.pb{grid-template-columns:1fr}.side{position:static}}
+</style>
