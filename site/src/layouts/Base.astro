@@ -19,7 +19,6 @@ const org = {
   '@id': ORIGIN + u('/') + '#org',
   name: site.brand, description: site.brandFull,
   url: ORIGIN + u('/'),
-  telephone: site.phone, email: site.email,
   address: { '@type': 'PostalAddress', addressRegion: 'Московская область', addressCountry: 'RU', streetAddress: site.addr },
   geo: { '@type': 'GeoCoordinates', latitude: site.geo.lat, longitude: site.geo.lon },
   areaServed: [{ '@type': 'AdministrativeArea', name: 'Московская область' }, { '@type': 'City', name: 'Москва' }],
