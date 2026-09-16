@@ -10,7 +10,7 @@ for k in sorted(A):
     p = os.path.join(D, k + '.md')
     if not os.path.exists(p):
         miss.append(k); continue
-    t = open(p).read()
+    t = open(p, encoding='utf-8').read()
     t = re.sub(r'^---.*?---\n', '', t, flags=re.S)
     n = len(t)
     lo, hi = A[k][12], A[k][13]

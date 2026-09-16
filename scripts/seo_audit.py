@@ -6,7 +6,7 @@ files=[f for f in glob.glob(D+'/**/index.html',recursive=True)]
 rows=[]
 for f in files:
     s=open(f,encoding='utf-8').read()
-    url='/'+os.path.relpath(f,D).replace('/index.html','').replace('index.html','')
+    url='/'+os.path.relpath(f,D).replace('\\','/').replace('/index.html','').replace('index.html','')
     url=('/' if url in ('/.','/') else url.rstrip('/')+'/')
     t=re.search(r'<title>(.*?)</title>',s,re.S)
     d=re.search(r'<meta name="description" content="(.*?)"',s,re.S)
